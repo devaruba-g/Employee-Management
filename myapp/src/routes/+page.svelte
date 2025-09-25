@@ -160,7 +160,7 @@ class="form">
 <form
   method="POST"
 use:enhance={({ formElement }) => {
-formElement.addEventListener("save", async (event) => {
+formElement.addEventListener("submit", async (event) => {
 let formData = new FormData(formElement);
 let response = await fetch(formElement.action, { method: "POST", body: formData });
 if (response.ok) {
@@ -204,7 +204,7 @@ Are you sure you want to delete {emp.name}?</AlertDialog.Description>
 </AlertDialog.Header><div class="actions gap-2">
 <form method="POST"
 use:enhance={({ formElement }) => {
-formElement.addEventListener("confirm", async (event) => {
+formElement.addEventListener("submit", async (event) => {
 event.preventDefault();
 let formData = new FormData(formElement);
 let response = await fetch(formElement.action, { method: "POST", body: formData });
