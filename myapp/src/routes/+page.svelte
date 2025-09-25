@@ -13,14 +13,10 @@ import * as Select from "$lib/components/ui/select/index.js";
   import { Badge } from "$lib/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "$lib/components/ui/avatar";
   import { writable, derived } from "svelte/store";
-  type Employee = {
-    id: number;
-    name: string;
-    role: string;
-    email: string;
-  };
-  export let data: { employees: Employee[] };
-  let edit: Employee | null = null;
+ export let data: {
+  employees: { id: number; name: string; role: string; email: string }[];
+};
+  let edit: { id: number; name: string; role: string; email: string } | null = null;
   let name = "";
   let email = "";
   let tab = "add";
@@ -32,10 +28,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "$lib/components/ui/avatar";
     { value: "guest", label: "Guest" },
   ];
   let role = writable("");
-let con = derived(role, ($role) => {
-  let r = roleslist.find((r) => r.value === $role);
-  return r ? r.label : "Select a role";
-});
+let con = derived(
+ role ,
+  ($value) => roleslist.find(f => f.value === $value)?.label ?? "Select a fruit"
+);
 </script>
 <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
 <Card class="bg-white border border-gray-200 p-4 text-center">
@@ -89,7 +85,6 @@ let con = derived(role, ($role) => {
   method="POST"
   use:enhance
   on:submit={async (event) => {
-event.preventDefault();
 toast.success("Employee Added Successfully!");
 name = "";
 email = "";
@@ -165,8 +160,7 @@ class="form">
 <form
   method="POST"
 use:enhance={({ formElement }) => {
-formElement.addEventListener("submit", async (event) => {
-event.preventDefault();
+formElement.addEventListener("save", async (event) => {
 let formData = new FormData(formElement);
 let response = await fetch(formElement.action, { method: "POST", body: formData });
 if (response.ok) {
@@ -210,7 +204,7 @@ Are you sure you want to delete {emp.name}?</AlertDialog.Description>
 </AlertDialog.Header><div class="actions gap-2">
 <form method="POST"
 use:enhance={({ formElement }) => {
-formElement.addEventListener("submit", async (event) => {
+formElement.addEventListener("confirm", async (event) => {
 event.preventDefault();
 let formData = new FormData(formElement);
 let response = await fetch(formElement.action, { method: "POST", body: formData });
